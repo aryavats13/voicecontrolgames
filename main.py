@@ -31,7 +31,7 @@ COLORS = {
 pygame.font.init()
 font = pygame.font.SysFont('arial', 40)
 
-# voice recognition catch ni kr paarha hai toh variation add krdiye hai taaki agar galat spell bhi hua toh logic smjh jaye konsa game
+#variation add 
 game_variations = {
     "word detective": [
         "word detective", "wordetective", "word-detective", 
@@ -91,7 +91,7 @@ def find_closest_game(command):
         if command in variations:
             return game
             
-    #fuzzy matching(import kr lena)
+    #fuzzy matching
     best_match = None
     highest_ratio = 0
     
@@ -108,7 +108,7 @@ def find_closest_game(command):
                 highest_ratio = best_ratio
                 best_match = game
     
-     # Agar confident match milta hai tabhi return karo
+     
     if highest_ratio >= 60: 
         return best_match
     return None
@@ -153,7 +153,7 @@ is_showing_answer = False
 
 def get_voice_input():
     """Get voice input from the user"""
-    recognizer = sr.Recognizer() #recognizer
+    recognizer = sr.Recognizer() 
     with sr.Microphone() as source:
         screen.fill(COLORS['background']) 
         render_text("Listening...", (WINDOW_WIDTH//2, WINDOW_HEIGHT//2),COLORS['primary'])#neeche wala listening 
@@ -162,7 +162,6 @@ def get_voice_input():
         try:
             audio = recognizer.listen(source, timeout=5)
             text = recognizer.recognize_google(audio).lower()
-            # display
             screen.fill(COLORS['background'])
             render_text(f"You said: {text}", (WINDOW_WIDTH//2, WINDOW_HEIGHT//2), COLORS['secondary'])
             pygame.display.flip()
@@ -185,7 +184,8 @@ def render_text(text, position, color):
 def word_detective():
     global current_word, game_score, status_message, status_color, status_timer
     
-    # Word and hints 
+
+
     word_hints = {
         "apple": [
             "I am red or green in color",
@@ -211,20 +211,19 @@ def word_detective():
     
     game_running = True
     while game_running:
-        # Reset game state for new round
+       
         current_word = random.choice(list(word_hints.keys()))
         hints = word_hints[current_word]
         hints_used = 0
         attempts = 0
         round_complete = False
-        
-        # Create display version of word
+
         display_word = ['_' for _ in current_word]
         
         status_message = "Say your guess!"
         status_color = COLORS['primary']
         
-        while not round_complete and attempts < 3:  # Maximum 3 attempts per round(edit kr lena)
+        while not round_complete and attempts < 3: 
             screen.fill(COLORS['background'])
             
 
@@ -238,26 +237,26 @@ def word_detective():
             attempts_text = hint_font.render(f"Attempts Remaining: {3-attempts}", True, COLORS['text'])
             screen.blit(attempts_text, (WINDOW_WIDTH - 250, 50))
             
-            # word
+         
             word_text = font.render(' '.join(display_word), True, COLORS['text'])
             screen.blit(word_text, (WINDOW_WIDTH//2 - word_text.get_width()//2, 150))
             
-            # Hints 
+   
             for i, hint in enumerate(hints[:hints_used + 1]):
                 hint_text = hint_font.render(f"Hint {i+1}: {hint}", True, COLORS['secondary'])
                 screen.blit(hint_text, (WINDOW_WIDTH//2 - hint_text.get_width()//2, 250 + i*60))  # Increased spacing between hints
             
-            # Bottom - Status Messages 
+   
             if status_message:
                 status_text = hint_font.render(status_message, True, status_color)
                 screen.blit(status_text, (WINDOW_WIDTH//2 - status_text.get_width()//2, WINDOW_HEIGHT - 150))
             
             pygame.display.flip()
             
-            # Get voice input
+            # voice input
             recognizer = sr.Recognizer()
             with sr.Microphone() as source:
-               #listening neeche wala msg
+          
                 listening_text = hint_font.render("Listening...", True, COLORS['primary'])
                 screen.blit(listening_text, (WINDOW_WIDTH//2 - listening_text.get_width()//2, WINDOW_HEIGHT - 100))
                 pygame.display.flip()
@@ -267,13 +266,13 @@ def word_detective():
                     guess = recognizer.recognize_google(audio).lower()
                     attempts += 1
                     
-                    # Display what was heard (edit mt krna )
+         
                     heard_message = f"You said: {guess}"
                     heard_text = hint_font.render(heard_message, True, COLORS['secondary'])
                     screen.blit(heard_text, (WINDOW_WIDTH//2 - heard_text.get_width()//2, WINDOW_HEIGHT - 200))
                     pygame.display.flip()
                     
-                    # Check guess
+          
                     if guess == current_word:
                         game_score += 1
                         status_message = f"Correct! The word was {current_word}!"
@@ -291,17 +290,16 @@ def word_detective():
                     status_message = "Sorry, please try again."
                     status_color = COLORS['error']
             
-            # quit
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return game_score
             
             pygame.time.delay(1000)
-        
-        #full screen
+
         screen.fill(COLORS['background'])
         
-        #msg
+
         if attempts >= 3:
             messages = [
                 f"Round Over! The word was: {current_word}",
@@ -317,15 +315,14 @@ def word_detective():
                 "Press SPACE to play again",
                 "Press ESC to quit"
             ]
-        
-        # msg display
+
         for i, message in enumerate(messages):
             text = hint_font.render(message, True, COLORS['primary'])
             screen.blit(text, (WINDOW_WIDTH//2 - text.get_width()//2, WINDOW_HEIGHT//2 - 100 + i*50))
         
         pygame.display.flip()
         
-        # Wait for player decision
+
         waiting_for_input = True
         while waiting_for_input:
             for event in pygame.event.get():
@@ -347,8 +344,7 @@ def spellbee():
     
     recognizer = sr.Recognizer()
     engine = pyttsx3.init()
-    
-    #levels hta diya 
+
     words = [
         "encyclopedia", "pneumonia", "catastrophe", "surveillance",
         "conscious", "rhythm", "symphony", "phenomenon", "anonymous",
@@ -357,7 +353,7 @@ def spellbee():
     ]
     
     score = 0
-    total_words = 5  # Number of words per game
+    total_words = 5 
     
 
     large_font = pygame.font.SysFont('arial', 48)
@@ -488,9 +484,8 @@ def flash_cards():
     game_score = 0
     status_message = ""
     status_color = COLORS['text']
-    status_timer = 0  # Countdown timer for displaying status messages
+    status_timer = 0 
 
-    # question initialize krne ke liye
     current_question, current_answer = random.choice(list(questions.items()))
     is_showing_answer = False
 
@@ -508,16 +503,15 @@ def flash_cards():
         score_rect = score_text.get_rect(topleft=(20, 20))
         screen.blit(score_text, score_rect)
 
-        # If answer mode  active
         if is_showing_answer:
             speak("Please answer the question.")
             user_answer = voice_control()
 
             if user_answer:
-                user_answer = " ".join(user_answer.strip().lower().split())  # Normalize input
+                user_answer = " ".join(user_answer.strip().lower().split())  
 
-                # Check the answer using fuzzy matching(fuzzy ke baare mai pdhlena ek baar)
-                if fuzz.ratio(user_answer, current_answer) >= 80:  # Adjust  as needed
+             
+                if fuzz.ratio(user_answer, current_answer) >= 80: 
                     game_score += 1
                     status_message = "Correct answer!"
                     status_color = COLORS['success']
@@ -527,7 +521,6 @@ def flash_cards():
                     status_color = COLORS['error']
                     speak(status_message)
 
-            # Reset for the next question
             status_timer = 180 
             is_showing_answer = False
             current_question, current_answer = random.choice(list(questions.items()))
@@ -538,7 +531,7 @@ def flash_cards():
         pygame.draw.rect(screen, COLORS['primary'], button_rect.inflate(20, 20), border_radius=10)
         screen.blit(button_text, button_rect)
 
-        #  "Quit" button
+        #  "quit" button
         quit_text = font.render("Quit", True, COLORS['error'])
         quit_rect = quit_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 150))
         pygame.draw.rect(screen, COLORS['primary'], quit_rect.inflate(20, 20), border_radius=10)
@@ -566,7 +559,7 @@ def flash_cards():
             screen.blit(status_text, status_rect)
             status_timer -= 1
 
-        # Update the display
+      
         pygame.display.flip()
         clock = pygame.time.Clock()
         clock.tick(60)  
@@ -606,11 +599,10 @@ games = ["word detective", "spellbee", "flash cards", "2048"]
 def show_menu(status_message=None, status_color=(255, 0, 0)):
     screen.fill(COLORS['background'])
     
-    # Display title
+
     title = font.render('Select a Game', True, COLORS['primary'])
     screen.blit(title, (WINDOW_WIDTH // 2 - title.get_width() // 2, 50))
-    
-    # Display game options
+
     for idx, game_name in enumerate(games):
         game_text = font.render(game_name, True, COLORS['text'])
         screen.blit(game_text, (WINDOW_WIDTH // 2 - game_text.get_width() // 2, 150 + idx * 60))
